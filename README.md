@@ -16,16 +16,10 @@ module master.
 - **ffmpeg / ffprobe** on PATH (Homebrew ffmpeg recommended — has libx264).
 - `npm install` here (downloads Chromium via Puppeteer).
 
-## Scripts
-
-```bash
-npm run shot 01-03-the-cluster        # 4K PNG of one section (capture-mode smoke test)
-SCALE=1 npm run shot 01-03-the-cluster # 1080p instead of 4K
-```
-
-`SCALE` (default `2`) sets the capture resolution: `2` → 3840×2160, `1` → 1920×1080. The
-render-app scales its fixed 1920×1080 stage to fill a SCALE× viewport, so text re-rasterizes
-crisp. `APP_URL` (default `http://localhost:5173`), `CONCEPT`, and `MODULE` are overridable.
+**Resolution:** `SCALE` (default `2`) sets the capture resolution — `2` → 3840×2160, `1` →
+1920×1080. The render-app scales its fixed 1920×1080 stage to fill a SCALE× viewport, so text
+re-rasterizes crisp. `APP_URL` (default `http://localhost:5173`), `CONCEPT`, and `CONTENT_BASE`
+are overridable.
 
 ## Recording a module
 
