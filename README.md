@@ -27,5 +27,23 @@ SCALE=1 npm run shot 01-03-the-cluster # 1080p instead of 4K
 render-app scales its fixed 1920×1080 stage to fill a SCALE× viewport, so text re-rasterizes
 crisp. `APP_URL` (default `http://localhost:5173`), `CONCEPT`, and `MODULE` are overridable.
 
-> The full video recorder (`record-section.mjs` per-section 4K segments + `record-module.mjs`
-> `-c copy` merge → module master) is the next slice.
+## Recording a module
+
+```bash
+npm run capture 01-foundations-and-the-cluster           # capture changed sections + merge → 4K master
+npm run capture:section 01-foundations-and-the-cluster   # capture only → per-section segment MP4s
+npm run capture:merge   01-foundations-and-the-cluster   # merge existing segments → master (no browser)
+```
+
+Output: `capture/out/<concept>/<moduleId>.mp4` (H.264/AAC), concatenated with `-c copy` from
+the per-section segments in `capture/segments/<concept>/<moduleId>/`. A **cold run records in
+real time** (each section lasts its narration `.wav`); a **re-run reuses unchanged segments**
+(fingerprinted on audio + slide + timing + `focus`/`highlight` + encode settings) and only
+re-records what changed.
+
+- `--only <slug-substr | N>` — scope to matching sections (a re-render of one section)
+- `--force` — ignore the cache, re-record every section
+- Env: `MAX_SECTIONS` (cap for a smoke test), `WAIT_MS` (fast visual test; desyncs audio),
+  `OUT_NAME` (master stem, avoid clobbering a real master), `SECTION_STING_MS`, `OPENER_MS`.
+
+> Next: a thumbnail script and the `meta.txt` generator (description + section timings).
