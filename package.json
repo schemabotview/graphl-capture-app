@@ -5,6 +5,7 @@
   "description": "GraphL capture pipeline — Puppeteer records the render-app into 4K video (and thumbnails). Drives the render-app dev server in capture mode.",
   "scripts": {
     "shot": "node capture/shot.mjs",
+    "thumb": "node capture/thumb.mjs",
     "capture": "node capture/record-module.mjs --record",
     "capture:section": "node capture/record-section.mjs",
     "capture:merge": "node capture/record-module.mjs"

@@ -46,4 +46,16 @@ re-records what changed.
 - Env: `MAX_SECTIONS` (cap for a smoke test), `WAIT_MS` (fast visual test; desyncs audio),
   `OUT_NAME` (master stem, avoid clobbering a real master), `SECTION_STING_MS`, `OPENER_MS`.
 
-> Next: a thumbnail script and the `meta.txt` generator (description + section timings).
+## Thumbnail
+
+```bash
+npm run thumb 01-foundations-and-the-cluster              # → capture/out/<concept>/<moduleId>.png (1280×720)
+npm run thumb 01-foundations-and-the-cluster -- --full4k  # keep the 3840×2160 grab
+```
+
+The **module opener IS the thumbnail** — `thumb.mjs` screenshots the render-app's opener card
+(whole scene + concept title panel) at 4K and downscales to 1280×720 (Lanczos), so there's no
+separate design to keep in sync. In capture mode the opener holds indefinitely (it waits for a
+`capture-opener-start` event the script never sends), so the grab never races the fade.
+
+> Next: the `meta.txt` generator (description + section timings) — likely its own content-gen repo.
