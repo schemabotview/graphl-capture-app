@@ -1,7 +1,7 @@
 # graphl-capture-app
 
 The **capture pipeline** for GraphL: a Puppeteer harness that drives the
-[`render-app`](../render-app) in its **capture mode** (`?capture=1`) and records a lesson
+[`graphl-render-app`](../graphl-render-app) in its **capture mode** (`?capture=1`) and records a lesson
 into **4K (3840×2160)** video. Part of the GraphL platform, alongside the render app and
 the content repos.
 
@@ -12,7 +12,7 @@ module master.
 
 ## Prerequisites
 
-- The **render-app dev server running** (`cd ../render-app && npm run dev`) — capture drives it.
+- The **render-app dev server running** (`cd ../graphl-render-app && npm run dev`) — capture drives it.
 - **ffmpeg / ffprobe** on PATH (Homebrew ffmpeg recommended — has libx264).
 - `npm install` here (downloads Chromium via Puppeteer).
 
