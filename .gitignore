@@ -1,0 +1,5 @@
+node_modules
+capture/out
+capture/.tmp
+capture/segments
+.DS_Store
