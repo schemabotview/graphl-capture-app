@@ -58,6 +58,11 @@ CONTENT_BASE=https://raw.githubusercontent.com/schemabotview/data-warehousing-ct
 npm run thumb 01-warehouse-foundations
 ```
 
+# for meta youtube description
+CONCEPT=data-warehousing \
+CONTENT_BASE=https://raw.githubusercontent.com/schemabotview/data-warehousing-ct/main \
+npm run meta 02-normalization-and-keys
+
 ## Thumbnail
 
 ```bash
