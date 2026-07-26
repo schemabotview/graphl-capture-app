@@ -50,9 +50,7 @@ re-record every section (otherwise unchanged content reuses the stale segments).
 
 ```bash
 # Re-capture module 01 → capture/out/data-warehousing/01-warehouse-foundations.mp4 (4K master)
-CONCEPT=data-warehousing \
-CONTENT_BASE=https://raw.githubusercontent.com/schemabotview/data-warehousing-ct/main \
-npm run capture 01-warehouse-foundations -- --force
+CONCEPT=data-warehousing CONTENT_BASE=https://raw.githubusercontent.com/schemabotview/data-warehousing-ct/main npm run capture 01-warehouse-foundations -- --force
 
 # Refresh its thumbnail → capture/out/data-warehousing/01-warehouse-foundations.png
 CONCEPT=data-warehousing \
