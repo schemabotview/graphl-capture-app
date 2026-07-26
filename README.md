@@ -40,6 +40,26 @@ re-records what changed.
 - Env: `MAX_SECTIONS` (cap for a smoke test), `WAIT_MS` (fast visual test; desyncs audio),
   `OUT_NAME` (master stem, avoid clobbering a real master), `SECTION_STING_MS`, `OPENER_MS`.
 
+### Capturing a non-default concept (e.g. Data Warehousing)
+
+The scripts default to `apache-spark`. To capture another concept, set `CONCEPT` + `CONTENT_BASE`
+(content — manifest / slides / audio — is fetched from GitHub; the render-app dev server supplies
+the *code*). The fingerprint cache keys on **content** (audio · slide · timing · `focus`/`highlight`
+· encode settings), **not** render-app code — so after changing the render app, add `--force` to
+re-record every section (otherwise unchanged content reuses the stale segments).
+
+```bash
+# Re-capture module 01 → capture/out/data-warehousing/01-warehouse-foundations.mp4 (4K master)
+CONCEPT=data-warehousing \
+CONTENT_BASE=https://raw.githubusercontent.com/schemabotview/data-warehousing-ct/main \
+npm run capture 01-warehouse-foundations -- --force
+
+# Refresh its thumbnail → capture/out/data-warehousing/01-warehouse-foundations.png
+CONCEPT=data-warehousing \
+CONTENT_BASE=https://raw.githubusercontent.com/schemabotview/data-warehousing-ct/main \
+npm run thumb 01-warehouse-foundations
+```
+
 ## Thumbnail
 
 ```bash
