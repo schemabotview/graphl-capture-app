@@ -23,10 +23,14 @@ on:
         description: "Live render-app base URL"
         required: true
         default: "https://graphl.in"
-      video_preset:
-        description: "libx264 preset (CI runners are 2-vCPU — 'slow' is very slow at 4K)"
+      scale:
+        description: "Capture scale: 2 = 4K (slow encode on 2-vCPU CI), 1 = 1080p (~4x faster)"
         required: true
-        default: "medium"
+        default: "1"
+      video_preset:
+        description: "libx264 preset — CI is 2-vCPU; 4K needs ultrafast/veryfast to finish in reasonable time"
+        required: true
+        default: "veryfast"
       max_sections:
         description: "Cap sections (smoke test; blank = whole module)"
         required: false
@@ -66,6 +70,7 @@ jobs:
           APP_URL: ${{ inputs.app_url }}
           CONCEPT: ${{ inputs.concept }}
           CONTENT_BASE: ${{ inputs.content_base }}
+          SCALE: ${{ inputs.scale }}
           VIDEO_PRESET: ${{ inputs.video_preset }}
           MAX_SECTIONS: ${{ inputs.max_sections }}
         run: |
