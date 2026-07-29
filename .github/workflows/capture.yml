@@ -48,14 +48,20 @@ jobs:
           node-version: 22          # puppeteer@25 requires Node >=22.12
           cache: npm
 
-      - name: System deps (ffmpeg + Chromium libraries)
+      - name: System deps (ffmpeg + Chromium libraries + Xvfb)
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg \
+          sudo apt-get install -y ffmpeg xvfb \
             libnss3 libatk-bridge2.0-0 libgbm1 libasound2t64 libxshmfence1 fonts-liberation
 
       - name: Install (downloads Chromium)
         run: npm ci
+
+      # A virtual display so headful Chrome's compositor produces screencast frames.
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 3840x2160x24 &
+          echo "DISPLAY=:99" >> "$GITHUB_ENV"
 
       # Reuse unchanged segments across runs; the content fingerprint still forces
       # re-records of anything that changed, so this only saves cold real-time captures.
@@ -73,11 +79,13 @@ jobs:
           SCALE: ${{ inputs.scale }}
           VIDEO_PRESET: ${{ inputs.video_preset }}
           MAX_SECTIONS: ${{ inputs.max_sections }}
+          HEADFUL: "1"          # headful under Xvfb (DISPLAY=:99) — screencast needs a compositor
+          MODULE: ${{ inputs.module }}
         run: |
-          npm run capture ${{ inputs.module }}
-          npm run thumb   ${{ inputs.module }}
+          npm run capture "$MODULE"
+          npm run thumb   "$MODULE"
           # meta needs every section's segment — skip it on a capped smoke run
-          if [ -z "${{ inputs.max_sections }}" ]; then npm run meta ${{ inputs.module }}; fi
+          if [ -z "${{ inputs.max_sections }}" ]; then npm run meta "$MODULE"; fi
 
       - uses: actions/upload-artifact@v4
         with:
