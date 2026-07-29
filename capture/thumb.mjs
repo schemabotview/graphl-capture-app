@@ -71,7 +71,7 @@ const firstSlug = slugOf(mod.sections[0])
 const browser = await puppeteer.launch({
   headless: true,
   defaultViewport: { width: CW, height: CH, deviceScaleFactor: 1 },
-  args: [`--window-size=${CW},${CH}`, '--autoplay-policy=no-user-gesture-required'],
+  args: [`--window-size=${CW},${CH}`, '--autoplay-policy=no-user-gesture-required', '--no-sandbox', '--disable-setuid-sandbox'],
 })
 const page = await browser.newPage()
 await page.goto(`${APP_URL}/?capture=1#/`, { waitUntil: 'networkidle2' })

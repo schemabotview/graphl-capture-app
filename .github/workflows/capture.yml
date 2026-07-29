@@ -1,0 +1,70 @@
+name: Capture module
+
+# Drives the live render-app (graphl.in) in capture mode and records a module
+# into a 4K trio: <module>.mp4 + <module>.png + <module>.txt, uploaded as an artifact.
+# render-app is served from GitHub Pages (graphl.in), so this job needs no dev server.
+
+on:
+  workflow_dispatch:
+    inputs:
+      concept:
+        description: "Concept id (catalog key)"
+        required: true
+        default: "java"
+      content_base:
+        description: "CONTENT_BASE (raw GitHub base for the concept's -ct repo)"
+        required: true
+        default: "https://raw.githubusercontent.com/schemabotview/java-ct/main"
+      module:
+        description: "Module id"
+        required: true
+        default: "01-java-essentials"
+      app_url:
+        description: "Live render-app base URL"
+        required: true
+        default: "https://graphl.in"
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120          # recording is real-time — give a full module room
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: System deps (ffmpeg + Chromium libraries)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg \
+            libnss3 libatk-bridge2.0-0 libgbm1 libasound2 libxshmfence1 fonts-liberation
+
+      - name: Install (downloads Chromium)
+        run: npm ci
+
+      # Reuse unchanged segments across runs; the content fingerprint still forces
+      # re-records of anything that changed, so this only saves cold real-time captures.
+      - name: Restore segment cache
+        uses: actions/cache@v4
+        with:
+          path: capture/segments/${{ inputs.concept }}/${{ inputs.module }}
+          key: segments-${{ inputs.concept }}-${{ inputs.module }}-v1
+
+      - name: Capture the trio (mp4 + png + txt)
+        env:
+          APP_URL: ${{ inputs.app_url }}
+          CONCEPT: ${{ inputs.concept }}
+          CONTENT_BASE: ${{ inputs.content_base }}
+        run: |
+          npm run capture ${{ inputs.module }}
+          npm run thumb   ${{ inputs.module }}
+          npm run meta    ${{ inputs.module }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.concept }}-${{ inputs.module }}
+          path: capture/out/${{ inputs.concept }}/${{ inputs.module }}.*
+          if-no-files-found: error
