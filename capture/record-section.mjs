@@ -61,7 +61,9 @@ export const FFMPEG_ENCODE =
   process.env.FFMPEG_ENCODE ??
   ['/opt/homebrew/bin/ffmpeg', '/usr/local/bin/ffmpeg'].find(existsSync) ??
   'ffmpeg'
-const HAS_X264 = FFMPEG_ENCODE !== 'ffmpeg' // brew builds ship libx264
+// brew builds ship libx264; on Linux the system (apt) ffmpeg has it too. Only a bare
+// macOS system ffmpeg lacks it → fall back to Apple's hardware encoder there.
+const HAS_X264 = FFMPEG_ENCODE !== 'ffmpeg' || process.platform === 'linux'
 export const VIDEO_CODEC = process.env.VIDEO_CODEC ?? (HAS_X264 ? 'libx264' : 'h264_videotoolbox')
 // Constant frame rate for every segment. `-c copy` concat (record-module) needs identical
 // codec params AND a stable timebase across segments — the raw screencast is variable-rate,
