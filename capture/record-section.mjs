@@ -61,9 +61,7 @@ export const FFMPEG_ENCODE =
   process.env.FFMPEG_ENCODE ??
   ['/opt/homebrew/bin/ffmpeg', '/usr/local/bin/ffmpeg'].find(existsSync) ??
   'ffmpeg'
-// brew builds ship libx264; on Linux the system (apt) ffmpeg has it too. Only a bare
-// macOS system ffmpeg lacks it → fall back to Apple's hardware encoder there.
-const HAS_X264 = FFMPEG_ENCODE !== 'ffmpeg' || process.platform === 'linux'
+const HAS_X264 = FFMPEG_ENCODE !== 'ffmpeg' // brew builds ship libx264
 export const VIDEO_CODEC = process.env.VIDEO_CODEC ?? (HAS_X264 ? 'libx264' : 'h264_videotoolbox')
 // Constant frame rate for every segment. `-c copy` concat (record-module) needs identical
 // codec params AND a stable timebase across segments — the raw screencast is variable-rate,
@@ -253,21 +251,10 @@ export async function planSection(mod, i, { tmp, segDir }, { only = [], force = 
 // Launch a SCALE× headless capture browser, parked on the blank dark pre-roll.
 export async function launchBrowser() {
   const puppeteer = (await import('puppeteer')).default
-  // HEADFUL=1 (used on CI under Xvfb): pure-headless Chrome on a display-less Linux runner
-  // starves page.screencast() of compositor frames and recorder.stop() never finalizes — a
-  // virtual display + headful fixes it. Local stays headless (macOS has a real compositor).
   const browser = await puppeteer.launch({
-    headless: process.env.HEADFUL ? false : true,
+    headless: true,
     defaultViewport: { width: CW, height: CH, deviceScaleFactor: 1 },
-    args: [
-      `--window-size=${CW},${CH}`,
-      '--autoplay-policy=no-user-gesture-required',
-      '--no-sandbox', '--disable-setuid-sandbox',
-      // keep the tab painting at full rate while it's "backgrounded" during the record
-      '--disable-background-timer-throttling',
-      '--disable-renderer-backgrounding',
-      '--disable-backgrounding-occluded-windows',
-    ],
+    args: [`--window-size=${CW},${CH}`, '--autoplay-policy=no-user-gesture-required'],
   })
   const page = await browser.newPage()
   await page.goto(`${APP_URL}/?capture=1#/`, { waitUntil: 'networkidle2' })
